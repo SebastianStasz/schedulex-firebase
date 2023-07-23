@@ -1,2 +1,4 @@
 *.DS_Store
 venv
+schedulex-service-account-key.json
+json_data.json
