@@ -3,9 +3,53 @@ import requests
 import json
 
 
+def group_name_for(type):
+    if type == 'TEACHERS':
+        return 'group'
+    elif type == 'PAVILIONS':
+        return 'pavilion'
+    else:
+        return 'faculty'
+
+
+def group_items_name_for(type):
+    if type == 'TEACHERS':
+        return 'teachers'
+    elif type == 'PAVILIONS':
+        return 'classrooms'
+    else:
+        return 'groups'
+
+
+def is_teacher(type):
+    return True if type == 'TEACHERS' else False
+
+
+
+base_url = 'https://planzajec.uek.krakow.pl/index.php/'
+
+
 def get_soup_from_url(url):
     response = requests.get(url)
     return bs4.BeautifulSoup(response.content, 'html.parser')
+
+
+def get_name_and_url_from(url_suffix, is_teacher):
+    url = base_url + url_suffix
+    soup = get_soup_from_url(url)
+    elements = soup.find(class_='kolumny').findAll('a')
+    result = []
+    for element in elements:
+        if is_teacher:
+            name_and_degree = element.text.split(',')
+            degree_data = name_and_degree[1].strip()
+            degree = degree_data if degree_data != '' else None
+            result.append({'name': name_and_degree[0],
+                           'degree': degree,
+                           'url_suffix': element.get('href')})
+        else:
+            result.append({'name': element.text, 'url_suffix': element.get('href')})
+    return result
 
 
 def get_groups_from_section(section):
@@ -20,34 +64,22 @@ def get_groups_from_section(section):
     return result
 
 
-def get_name_and_link_from(url_suffix):
-    url = 'https://planzajec.uek.krakow.pl/index.php/' + url_suffix
-    soup = get_soup_from_url(url)
-    elements = soup.find(class_='kolumny').findAll('a')
+def get_data_from_section(section, type: str):
     result = []
-    for element in elements:
-        result.append({'name': element.text, 'url_suffix': element.get('href')})
-    return result
-
-
-def get_data_from_section(section, group_name, group_elements_name):
-    groups = get_groups_from_section(section)
-    result = []
-    for group in groups:
-        elements = get_name_and_link_from(group['url_suffix'])
-        result.append({group_name: group['group'], group_elements_name: elements})
+    for group in get_groups_from_section(section):
+        items = get_name_and_url_from(group['url_suffix'], is_teacher(type))
+        item = {group_name_for(type): group['group'], group_items_name_for(type): items}
+        result.append(item)
     return result
 
 
 if __name__ == '__main__':
-    base_url = 'https://planzajec.uek.krakow.pl/index.php/'
-    resp = requests.get(base_url)
-    soup = bs4.BeautifulSoup(resp.content, 'html.parser')
+    soup = get_soup_from_url(base_url)
     sections = soup.findAll(class_='kategorie')
 
-    teacher_groups = get_data_from_section(sections[0], 'group', 'teachers')
-    pavilions = get_data_from_section(sections[2], 'pavilion', 'classrooms')
-    faculties = get_data_from_section(sections[1], 'faculty', 'groups')
+    teacher_groups = get_data_from_section(sections[0], 'TEACHERS')
+    pavilions = get_data_from_section(sections[2], 'PAVILIONS')
+    faculties = get_data_from_section(sections[1], 'FACULTIES')
 
     data = {'teacher_groups': teacher_groups,
             'pavilions': pavilions,
