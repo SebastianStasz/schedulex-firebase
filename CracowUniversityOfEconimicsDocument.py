@@ -1,13 +1,13 @@
 from firestore_size.calculate import document_size
 
 
-class CracowUniversityOfEconimicsDocument:
+class CracowUniversityOfEconimicsDocument():
     def __init__(self, db):
         self.db = db
 
 
     def set_document_data(self, uek_data):
-        doc_ref = self.document_reference(self.db)
+        doc_ref = self.document_reference()
         doc_ref.set(uek_data)
 
 

@@ -44,7 +44,7 @@ def get_name_and_url_from(url_suffix, is_teacher):
             name_and_degree = element.text.split(',')
             degree_data = name_and_degree[1].strip()
             degree = degree_data if degree_data != '' else None
-            result.append({'name': name_and_degree[0],
+            result.append({'fullName': name_and_degree[0],
                            'degree': degree,
                            'url_suffix': element.get('href')})
         else:
@@ -82,6 +82,9 @@ def get_cracow_univeristy_of_economics_data():
     faculties = get_data_from_section(sections[1], 'FACULTIES')
 
     data = {'teacher_groups': teacher_groups,
+    data = {'name': 'Cracow University of Economics',
+            'city': 'Cracow',
+            'teacherGroups': teacher_groups,
             'pavilions': pavilions,
             'faculties': faculties}
 

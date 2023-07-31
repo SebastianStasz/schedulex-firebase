@@ -1,6 +1,6 @@
 from uek_schedule_scraper import get_cracow_univeristy_of_economics_data
 from firebase_admin import credentials, firestore
-import CracowUniversityOfEconimicsDocument
+from CracowUniversityOfEconimicsDocument import CracowUniversityOfEconimicsDocument
 import firebase_admin
 
 
