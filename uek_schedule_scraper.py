@@ -1,6 +1,5 @@
 import bs4
 import requests
-import json
 
 
 def group_name_for(type):
@@ -23,7 +22,6 @@ def group_items_name_for(type):
 
 def is_teacher(type):
     return True if type == 'TEACHERS' else False
-
 
 
 base_url = 'https://planzajec.uek.krakow.pl/index.php/'
