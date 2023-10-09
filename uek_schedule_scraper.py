@@ -1,4 +1,4 @@
-from uek_schedule_scraper_utils import base_url, get_soup_from_url, group_items_name_for, group_name_for, to_faculty_name_document
+from uek_schedule_scraper_utils import base_url, get_soup_from_url, group_items_key_for, group_key_for, to_faculty_name_document, group_type_for, get_url_for_faculty_group_events
 from uek_schedule_faculty_group import get_faculty_group_data
 from uek_schedule_teacher import getTeacherData
     
@@ -26,10 +26,13 @@ def get_name_and_url_from(url_suffix, group_name, type):
         elif type == 'PAVILIONS':
             result.append({'name': element.text, 'url_suffix': element.get('href')})
         elif type == 'FACULTIES':
-            faculty_group_data = get_faculty_group_data(element)
+            is_language_class = group_name == '*Centrum Językowe*'
+            faculty_group_data = get_faculty_group_data(element, is_language_class)
+            faculty_url = get_url_for_faculty_group_events(element.get('href'))
             save_faculty_group(group_name, faculty_group_data)
             result.append({'name': faculty_group_data['group'], 
                            'numberOfEvents': faculty_group_data['numberOfEvents'], 
+                           'facultyUrl': faculty_url,
                            'facultyDocument': to_faculty_name_document(group_name)})
             
     return result
@@ -52,10 +55,12 @@ def get_data_from_section(section, type: str):
     for group in get_groups_from_section(section):
         group_name = group['group']
         print(f'Scraping: {group_name}')
-        if group_name == '*Centrum Językowe*':
-            continue
         items = get_name_and_url_from(group['url_suffix'], group_name, type)
-        item = {group_name_for(type): group_name, group_items_name_for(type): items}
+        item = {group_key_for(type): group_name.replace('*', '').strip(), 
+                group_items_key_for(type): items}
+        group_type = group_type_for(type, group_name)
+        if group_type != None:
+            item['type'] = group_type
         result.append(item)
     return result
 

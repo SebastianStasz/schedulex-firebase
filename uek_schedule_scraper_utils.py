@@ -4,6 +4,11 @@ import requests
 
 base_url = 'https://planzajec.uek.krakow.pl/index.php/'
 
+def get_url_for_faculty_group_events(url_suffix):
+    url = base_url + url_suffix
+    url = url.replace('okres=1', 'okres=2')
+    return url
+
 
 def get_soup_from_url(url):
     response = requests.get(url)
@@ -15,10 +20,21 @@ def to_faculty_group_name_document(group_name):
 
 
 def to_faculty_name_document(faculty_name):
-    return faculty_name.replace(' ', '_').replace('*', '').lower()
+    return faculty_name.replace(' ', '_').replace('*', '').replace('/', '_').lower()
 
 
-def group_name_for(type):
+def group_type_for(type, name):
+    if type != "FACULTIES": return None
+    
+    if name == "*Centrum Językowe*" or name == "*SWFiS*":
+        return 'GLOBAL'
+    elif name[0] == '*':
+        return 'OTHER'
+    else: 
+        return 'FACULTY'
+
+
+def group_key_for(type):
     if type == 'TEACHERS':
         return 'group'
     elif type == 'PAVILIONS':
@@ -27,7 +43,7 @@ def group_name_for(type):
         return 'faculty'
 
 
-def group_items_name_for(type):
+def group_items_key_for(type):
     if type == 'TEACHERS':
         return 'teachers'
     elif type == 'PAVILIONS':
