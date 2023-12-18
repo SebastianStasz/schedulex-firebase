@@ -2,3 +2,5 @@
 venv
 schedulex-service-account-key.json
 json_data.json
+.vscode
+__pycache__
