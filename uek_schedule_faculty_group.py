@@ -1,9 +1,9 @@
 from uek_schedule_event import none_if_empty, to_event_date
-from uek_schedule_scraper_utils import base_url, get_soup_from_url, get_url_for_faculty_group_events
+from uek_schedule_scraper_utils import base_url, get_soup_from_url, get_url_for_events
 
 
 def get_faculty_group_events(url_suffix, is_language_class):
-    url = get_url_for_faculty_group_events(url_suffix)
+    url = get_url_for_events(url_suffix)
     soup = get_soup_from_url(url)
     rows = soup.findAll('tr')
     if len(rows) > 0:

@@ -6,7 +6,7 @@ from requests.adapters import HTTPAdapter, Retry
 
 base_url = 'https://planzajec.uek.krakow.pl/index.php/'
 
-def get_url_for_faculty_group_events(url_suffix):
+def get_url_for_events(url_suffix):
     url = base_url + url_suffix
     url = url.replace('okres=1', 'okres=2')
     return url
@@ -58,7 +58,7 @@ def group_key_for(type):
     if type == 'TEACHERS':
         return 'group'
     elif type == 'PAVILIONS':
-        return 'pavilion'
+        return 'name'
     else:
         return 'faculty'
 

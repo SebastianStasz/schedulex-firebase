@@ -1,19 +1,6 @@
-from uek_schedule_scraper_utils import base_url, get_soup_from_url, group_items_key_for, group_key_for, to_faculty_name_document, group_type_for, get_url_for_faculty_group_events
+from uek_schedule_scraper_utils import base_url, get_soup_from_url, group_items_key_for, group_key_for, to_faculty_name_document, group_type_for, get_url_for_events
 from uek_schedule_faculty_group import get_faculty_group_data
-from uek_schedule_teacher import getTeacherData
-    
-
-faculties = {}
-
-
-def save_faculty_group(faculty_name, faculty_group):
-    existing_faculty_groups = faculties.get(faculty_name)
-    if existing_faculty_groups is not None:
-        existing_faculty_groups.append(faculty_group)
-    else:
-        existing_faculty_groups = [faculty_group]
-    faculties[faculty_name] = existing_faculty_groups
-
+from uek_schedule_teacher import get_teacher_data
 
 def get_name_and_url_from(url_suffix, group_name, type):
     url = base_url + url_suffix
@@ -22,14 +9,17 @@ def get_name_and_url_from(url_suffix, group_name, type):
     result = []
     for element in elements:
         if type == 'TEACHERS':
-            result.append(getTeacherData(element))
+            result.append(get_teacher_data(element))
         elif type == 'PAVILIONS':
-            result.append({'name': element.text, 'url_suffix': element.get('href')})
+            classroom_group_data = get_faculty_group_data(element, False)
+            classroom_url = get_url_for_events(element.get('href'))
+            result.append({'name': element.text,
+                           'numberOfEvents': classroom_group_data['numberOfEvents'], 
+                           'eventsUrl': classroom_url})
         elif type == 'FACULTIES':
             is_language_class = group_name == '*Centrum Językowe*'
             faculty_group_data = get_faculty_group_data(element, is_language_class)
-            faculty_url = get_url_for_faculty_group_events(element.get('href'))
-            save_faculty_group(group_name, faculty_group_data)
+            faculty_url = get_url_for_events(element.get('href'))
             result.append({'name': faculty_group_data['group'], 
                            'numberOfEvents': faculty_group_data['numberOfEvents'], 
                            'facultyUrl': faculty_url,
