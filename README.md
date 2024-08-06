@@ -1,0 +1,1 @@
+schedulex-firebase is a Python-based project designed to scrape schedule data from a specified website and populate a Firebase database with the retrieved information. This project is particularly useful for automating the extraction and storage of scheduling data, ensuring that the information is always up-to-date and easily accessible via Firebase.
