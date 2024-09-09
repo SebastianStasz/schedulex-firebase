@@ -1,29 +1,25 @@
 from uek_schedule_scraper_utils import base_url, get_soup_from_url, group_items_key_for, group_key_for, to_faculty_name_document, group_type_for, get_url_for_events
 from uek_schedule_faculty_group import get_faculty_group_data
 from uek_schedule_teacher import get_teacher_data
+from uek_schedule_pavilion import get_pavilion_data
+
 
 def get_name_and_url_from(url_suffix, group_name, type):
     url = base_url + url_suffix
     soup = get_soup_from_url(url)
     elements = soup.find(class_='kolumny').findAll('a')
     result = []
+
+    teacher_id = 0
+    
     for element in elements:
         if type == 'TEACHERS':
-            result.append(get_teacher_data(element))
+            teacher_id += 1
+            result.append(get_teacher_data(element, teacher_id))
         elif type == 'PAVILIONS':
-            classroom_group_data = get_faculty_group_data(element, False)
-            classroom_url = get_url_for_events(element.get('href'))
-            result.append({'name': element.text,
-                           'numberOfEvents': classroom_group_data['numberOfEvents'], 
-                           'eventsUrl': classroom_url})
+            result.append(get_pavilion_data(element))
         elif type == 'FACULTIES':
-            is_language_class = group_name == '*Centrum Językowe*'
-            faculty_group_data = get_faculty_group_data(element, is_language_class)
-            faculty_url = get_url_for_events(element.get('href'))
-            result.append({'name': faculty_group_data['group'], 
-                           'numberOfEvents': faculty_group_data['numberOfEvents'], 
-                           'facultyUrl': faculty_url,
-                           'facultyDocument': to_faculty_name_document(group_name)})
+            result.append(get_faculty_group_data(element, group_name))
             
     return result
 

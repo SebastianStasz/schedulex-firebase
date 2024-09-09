@@ -1,5 +1,23 @@
 from uek_schedule_event import none_if_empty, to_event_date
-from uek_schedule_scraper_utils import base_url, get_soup_from_url, get_url_for_events
+from uek_schedule_scraper_utils import base_url, get_soup_from_url, get_url_for_events, to_faculty_name_document
+
+
+def get_faculty_group_data(element, group_name):
+    is_language_class = group_name == '*Centrum Językowe*'
+    number_of_events = get_number_of_events(element, is_language_class)
+    faculty_url = get_url_for_events(element.get('href'))
+    
+    return {'name': group_name, 
+            'numberOfEvents': number_of_events, 
+            'facultyUrl': faculty_url,
+            'facultyDocument': to_faculty_name_document(group_name)}
+
+
+def get_number_of_events(element, is_language_class):
+    url_suffix = element.get('href')
+    facultyGroupEvents = get_faculty_group_events(url_suffix, is_language_class)
+    return len(facultyGroupEvents)
+    # return {'group': element.text, 'numberOfEvents': len(facultyGroupEvents), 'events': facultyGroupEvents}
 
 
 def get_faculty_group_events(url_suffix, is_language_class):
@@ -40,8 +58,3 @@ def get_faculty_group_events(url_suffix, is_language_class):
     
     return result
 
-
-def get_faculty_group_data(element, is_language_class):
-    url_suffix = element.get('href')
-    facultyGroupEvents = get_faculty_group_events(url_suffix, is_language_class)
-    return {'group': element.text, 'numberOfEvents': len(facultyGroupEvents), 'events': facultyGroupEvents}
