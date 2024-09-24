@@ -8,7 +8,7 @@ base_url = 'https://planzajec.uek.krakow.pl/index.php/'
 
 def get_url_for_events(url_suffix):
     url = base_url + url_suffix
-    url = url.replace('okres=1', 'okres=2')
+    url = url.replace('okres=1', 'okres=3')
     return url
 
 
@@ -46,7 +46,7 @@ def to_faculty_name_document(faculty_name):
 def group_type_for(type, name):
     if type != "FACULTIES": return None
     
-    if name == "*Centrum Językowe*" or name == "*SWFiS*":
+    if name == "*Centrum Językowe*": # or name == "*SWFiS*"
         return 'GLOBAL'
     elif name[0] == '*':
         return 'OTHER'
