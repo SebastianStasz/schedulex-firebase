@@ -5,12 +5,13 @@ from uek_schedule_scraper_utils import base_url, get_soup_from_url, get_url_for_
 def get_faculty_group_data(element, group_name):
     is_language_class = group_name == '*Centrum Językowe*'
     number_of_events = get_number_of_events(element, is_language_class)
+    faculty_name = element.text
     faculty_url = get_url_for_events(element.get('href'))
     
-    return {'name': group_name, 
+    return {'name': faculty_name, 
             'numberOfEvents': number_of_events, 
             'facultyUrl': faculty_url,
-            'facultyDocument': to_faculty_name_document(group_name)}
+            'facultyDocument': to_faculty_name_document(faculty_name)}
 
 
 def get_number_of_events(element, is_language_class):
