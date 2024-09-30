@@ -2,8 +2,7 @@ from uek_schedule_event import none_if_empty, to_event_date
 from uek_schedule_scraper_utils import base_url, get_soup_from_url, get_url_for_events, to_faculty_name_document
 
 
-def get_faculty_group_data(element, group_name):
-    is_language_class = group_name == '*Centrum Językowe*'
+def get_faculty_group_data(element, is_language_class):
     number_of_events = get_number_of_events(element, is_language_class)
     faculty_name = element.text
     faculty_url = get_url_for_events(element.get('href'))

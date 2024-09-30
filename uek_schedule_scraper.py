@@ -19,8 +19,11 @@ def get_name_and_url_from(url_suffix, group_name, type):
         elif type == 'PAVILIONS':
             result.append(get_pavilion_data(element))
         elif type == 'FACULTIES':
-            data = get_faculty_group_data(element, group_name)
-            if data['numberOfEvents'] != 0:
+            is_language_class = group_name == '*Centrum Językowe*'
+            data = get_faculty_group_data(element, is_language_class)
+            if is_language_class:
+                result.append(data)
+            elif data['numberOfEvents'] != 0:
                 result.append(data)
             
     return result
